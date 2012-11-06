@@ -1,6 +1,6 @@
-Route = function() {
+var Routes = function(params) {
 	
-	this.indicator = "#!/";
+	this.indicator = params.indicator || "#!/";
 	
 	var pages = [],hash = this, current_page = "";
 
@@ -33,17 +33,20 @@ Route = function() {
 
 	hash.register = function(slug, callback) {
 		if( $.isArray(slug) ) {
-			$.each(slug, function(i,v) {
-				pages.push({slug: v, callback: callback});
+			$.each(slug, function(index, value) {
+				pages.push({slug: value, callback: callback});
 			});
 		} else {
 			pages.push({slug: slug, callback: callback});
 		}
 		
 	}
-	
+
+	hash.check = function() {
+		if(window.location.hash) hash.as_changed();
+	}
+
 	hash.initialize = function(indicator) {
-		if(indicator) hash.indicator = indicator;
 		if ("onhashchange" in window) {
 			$(window).on('hashchange', function(e) {
 				hash.as_changed();
@@ -51,15 +54,4 @@ Route = function() {
 		}
 	}
 	hash.initialize();
-
-	hash.check = function() {
-		if(window.location.hash) hash.as_changed();
-	}
-	
-	hash.root = function(page) {
-		if( window.location.hash == "" ) {
-			hash.visit(page);
-		}
-	}
-	
 }
